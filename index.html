@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Bom Preço — KPIs Meta Ads</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: #f4f3f0;
+    color: #0b0b0b;
+    margin: 0;
+    padding: 24px;
+  }
+  .container { max-width: 960px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 500; margin: 0 0 4px; }
+  .subtitle { color: #52514e; font-size: 14px; margin: 0 0 24px; }
+  .section-title { font-size: 16px; font-weight: 500; margin: 32px 0 12px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .card {
+    background: #fcfcfb;
+    border: 0.5px solid rgba(11,11,11,0.1);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .card.highlight {
+    background: #eaf3de;
+    border-color: #97c459;
+  }
+  .card-label { font-size: 13px; color: #52514e; margin: 0 0 4px; }
+  .card-value { font-size: 24px; font-weight: 500; margin: 0; }
+  .card.highlight .card-value { color: #27500a; }
+  .card.highlight .card-label { color: #3b6d11; }
+  .chart-box { position: relative; width: 100%; height: 260px; margin-bottom: 32px; background: #fcfcfb; border-radius: 12px; border: 0.5px solid rgba(11,11,11,0.1); padding: 16px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; margin: 8px 0 16px; font-size: 12px; color: #52514e; }
+  .legend span { display: flex; align-items: center; gap: 4px; }
+  .dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+  footer { margin-top: 40px; font-size: 12px; color: #898781; border-top: 0.5px solid rgba(11,11,11,0.1); padding-top: 16px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+  th, td { text-align: left; padding: 8px; border-bottom: 0.5px solid rgba(11,11,11,0.1); }
+  th { color: #52514e; font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Dashboard Bom Preço — Meta Ads</h1>
+  <p class="subtitle" id="periodo">Período: carregando...</p>
+
+  <div class="section-title">Exposição de marca (alcance e frequência)</div>
+  <div class="grid">
+    <div class="card"><p class="card-label">Investimento</p><p class="card-value" id="kpi-investimento">-</p></div>
+    <div class="card"><p class="card-label">Alcance</p><p class="card-value" id="kpi-alcance">-</p></div>
+    <div class="card"><p class="card-label">Frequência média</p><p class="card-value" id="kpi-freq">-</p></div>
+    <div class="card"><p class="card-label">CPM médio</p><p class="card-value" id="kpi-cpm">-</p></div>
+  </div>
+
+  <div class="section-title">Volume levado aos canais de venda</div>
+  <div class="grid">
+    <div class="card highlight"><p class="card-label">Pessoas levadas aos canais</p><p class="card-value" id="kpi-total-canais">-</p></div>
+    <div class="card"><p class="card-label">Cliques no link</p><p class="card-value" id="kpi-cliques">-</p></div>
+    <div class="card"><p class="card-label">Novos contatos WhatsApp</p><p class="card-value" id="kpi-wpp">-</p></div>
+    <div class="card"><p class="card-label">Compras diretas</p><p class="card-value" id="kpi-compras">-</p></div>
+  </div>
+
+  <div class="section-title">Investimento e CPM por canal</div>
+  <div class="legend">
+    <span><span class="dot" style="background:#2a78d6"></span>Gasto (R$)</span>
+    <span><span class="dot" style="background:#eda100"></span>CPM (R$)</span>
+  </div>
+  <div class="chart-box"><canvas id="chGasto"></canvas></div>
+
+  <div class="section-title">Volume levado aos canais de venda, por canal</div>
+  <div class="legend">
+    <span><span class="dot" style="background:#2a78d6"></span>Cliques no link</span>
+    <span><span class="dot" style="background:#1baf7a"></span>Novos contatos WPP</span>
+    <span><span class="dot" style="background:#eda100"></span>Compras</span>
+  </div>
+  <div class="chart-box"><canvas id="chVolume"></canvas></div>
+
+  <div class="section-title">Campanhas ativas no período</div>
+  <table id="tabelaCampanhas">
+    <thead>
+      <tr><th>Campanha</th><th>Categoria</th><th>Gasto</th><th>Alcance</th><th>Freq.</th><th>CPM</th><th>Cliques</th><th>WPP novos</th><th>Compras</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <footer>
+    Dados extraídos do Meta Ads Manager (Drogarias Bom Preço). Atualizado manualmente via export CSV.
+    <br>Gerado com apoio do Claude.
+  </footer>
+</div>
+
+<script>
+fetch('data.json')
+  .then(r => r.json())
+  .then(d => {
+    document.getElementById('periodo').textContent =
+      'Período: ' + d.periodo.inicio + ' a ' + d.periodo.fim;
+
+    const k = d.kpisGerais;
+    document.getElementById('kpi-investimento').textContent = 'R$ ' + k.investimentoTotal.toLocaleString('pt-BR');
+    document.getElementById('kpi-alcance').textContent = (k.alcance/1000).toFixed(0) + 'k';
+    document.getElementById('kpi-freq').textContent = k.frequenciaMedia.toFixed(2) + 'x';
+    document.getElementById('kpi-cpm').textContent = 'R$ ' + k.cpmMedio.toFixed(2);
+    document.getElementById('kpi-total-canais').textContent = k.pessoasLevadasCanais.toLocaleString('pt-BR');
+    document.getElementById('kpi-cliques').textContent = k.cliquesLink.toLocaleString('pt-BR');
+    document.getElementById('kpi-wpp').textContent = k.novosContatosWpp.toLocaleString('pt-BR');
+    document.getElementById('kpi-compras').textContent = k.comprasDiretas.toLocaleString('pt-BR');
+
+    const cats = d.porCategoria;
+    const labels = cats.map(c => c.categoria);
+
+    new Chart(document.getElementById('chGasto'), {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          { label: 'Gasto (R$)', data: cats.map(c => c.gasto), backgroundColor: '#2a78d6', borderRadius: 4, yAxisID: 'y' },
+          { label: 'CPM (R$)', data: cats.map(c => c.cpm), backgroundColor: '#eda100', borderRadius: 4, yAxisID: 'y1' }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { position: 'left', ticks: { callback: v => 'R$'+v } },
+          y1: { position: 'right', grid: { drawOnChartArea: false }, ticks: { callback: v => 'R$'+v } }
+        }
+      }
+    });
+
+    new Chart(document.getElementById('chVolume'), {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          { label: 'Cliques no link', data: cats.map(c => c.cliques), backgroundColor: '#2a78d6', borderRadius: 4 },
+          { label: 'Novos contatos WPP', data: cats.map(c => c.msg_novas), backgroundColor: '#1baf7a', borderRadius: 4 },
+          { label: 'Compras', data: cats.map(c => c.compras), backgroundColor: '#eda100', borderRadius: 4 }
+        ]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { x: { beginAtZero: true } }
+      }
+    });
+
+    const tbody = document.querySelector('#tabelaCampanhas tbody');
+    d.campanhas
+      .sort((a,b) => b.gasto - a.gasto)
+      .forEach(c => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${c.nome}</td>
+          <td>${c.categoria}</td>
+          <td>R$ ${c.gasto.toLocaleString('pt-BR')}</td>
+          <td>${c.alcance.toLocaleString('pt-BR')}</td>
+          <td>${c.frequencia}x</td>
+          <td>R$ ${c.cpm}</td>
+          <td>${c.cliques}</td>
+          <td>${c.msgNovas}</td>
+          <td>${c.compras}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+  })
+  .catch(err => {
+    document.getElementById('periodo').textContent = 'Erro ao carregar dados: ' + err;
+  });
+</script>
+</body>
+</html>
