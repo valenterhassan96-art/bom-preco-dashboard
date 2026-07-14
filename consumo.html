@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perfil de consumo e loja — Bom Preço</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: #f4f3f0;
+    color: #0b0b0b;
+    margin: 0;
+    padding: 24px;
+  }
+  .container { max-width: 960px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 500; margin: 0 0 4px; }
+  .subtitle { color: #52514e; font-size: 14px; margin: 0 0 16px; }
+  .nav { margin-bottom: 24px; }
+  .nav a { font-size: 14px; color: #185fa5; text-decoration: none; margin-right: 16px; }
+  .nav a:hover { text-decoration: underline; }
+  .section-title { font-size: 16px; font-weight: 500; margin: 32px 0 12px; }
+  .note {
+    background: #faeeda; border: 0.5px solid #ef9f27; border-radius: 8px;
+    padding: 12px 16px; font-size: 13px; color: #633806; margin-bottom: 16px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .card {
+    background: #fcfcfb;
+    border: 0.5px solid rgba(11,11,11,0.1);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .card.highlight {
+    background: #eaf3de;
+    border-color: #97c459;
+  }
+  .card.warn {
+    background: #fcebeb;
+    border-color: #e24b4a;
+  }
+  .card-label { font-size: 13px; color: #52514e; margin: 0 0 4px; }
+  .card-value { font-size: 24px; font-weight: 500; margin: 0; }
+  .card.highlight .card-value { color: #27500a; }
+  .card.highlight .card-label { color: #3b6d11; }
+  .card.warn .card-value { color: #791f1f; }
+  .card.warn .card-label { color: #a32d2d; }
+  .chart-box { position: relative; width: 100%; height: 280px; margin-bottom: 32px; background: #fcfcfb; border-radius: 12px; border: 0.5px solid rgba(11,11,11,0.1); padding: 16px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; margin: 8px 0 16px; font-size: 12px; color: #52514e; }
+  .legend span { display: flex; align-items: center; gap: 4px; }
+  .dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+  th, td { text-align: left; padding: 8px; border-bottom: 0.5px solid rgba(11,11,11,0.1); }
+  th { color: #52514e; font-weight: 500; }
+  .parecer { background: #fcfcfb; border: 0.5px solid rgba(11,11,11,0.1); border-radius: 12px; padding: 20px; margin-top: 8px; }
+  .parecer h3 { font-size: 15px; font-weight: 500; margin: 0 0 8px; }
+  .parecer p { font-size: 14px; line-height: 1.6; color: #2c2c2a; margin: 0 0 16px; }
+  .parecer ol { padding-left: 20px; margin: 0; }
+  .parecer li { font-size: 14px; line-height: 1.6; margin-bottom: 12px; }
+  footer { margin-top: 40px; font-size: 12px; color: #898781; border-top: 0.5px solid rgba(11,11,11,0.1); padding-top: 16px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="nav">
+    <a href="index.html">← Dashboard Meta Ads</a>
+    <a href="consumo.html">Perfil de consumo e loja</a>
+  </div>
+
+  <h1>Perfil de consumo e movimento em loja</h1>
+  <p class="subtitle">Dados MySeer (ERP) — julho/2026, dia 1 a 12</p>
+
+  <div class="note">
+    A base de produtos usada no perfil de consumo é o <strong>histórico acumulado</strong> do ERP, não um corte isolado de julho. Os KPIs de loja (ticket médio, faturamento, notas) abaixo são o corte real de julho/2026.
+  </div>
+
+  <div class="section-title">Movimento em loja — julho/2026 (dia 1 a 12)</div>
+  <div class="grid">
+    <div class="card highlight"><p class="card-label">Faturamento</p><p class="card-value" id="kpi-fat">-</p></div>
+    <div class="card"><p class="card-label">Notas/clientes</p><p class="card-value" id="kpi-notas">-</p></div>
+    <div class="card"><p class="card-label">Ticket médio</p><p class="card-value" id="kpi-ticket">-</p></div>
+    <div class="card"><p class="card-label">Itens por cliente</p><p class="card-value" id="kpi-itens">-</p></div>
+  </div>
+  <div class="grid">
+    <div class="card warn"><p class="card-label">% Desconto médio</p><p class="card-value" id="kpi-desconto">-</p></div>
+    <div class="card"><p class="card-label">Meta do mês</p><p class="card-value" id="kpi-meta">-</p></div>
+    <div class="card highlight"><p class="card-label">Venda projetada</p><p class="card-value" id="kpi-projetada">-</p></div>
+    <div class="card highlight"><p class="card-label">% Meta projetada</p><p class="card-value" id="kpi-pct-meta">-</p></div>
+  </div>
+
+  <div class="section-title">Perfil de consumo — participação por categoria (top 100 produtos, histórico)</div>
+  <div class="legend" id="legendCategorias"></div>
+  <div class="chart-box"><canvas id="chCategorias"></canvas></div>
+
+  <div class="section-title">Top 15 produtos por faturamento (histórico)</div>
+  <table>
+    <thead><tr><th>Produto</th><th>Categoria</th><th>Venda</th><th>Clientes</th></tr></thead>
+    <tbody id="tabelaProdutos"></tbody>
+  </table>
+
+  <div class="section-title">ROAS — retorno sobre investimento em mídia</div>
+  <div class="note">
+    ROAS calculado apenas sobre o valor de conversão rastreado pelo pixel do site. WhatsApp e loja física não entram nesse número porque não há rastreamento de valor de compra nesses canais — o retorno real da campanha é maior do que o ROAS abaixo mostra.
+  </div>
+  <div class="grid">
+    <div class="card"><p class="card-label">Valor de conversão do site (7d)</p><p class="card-value" id="kpi-conversao">-</p></div>
+    <div class="card"><p class="card-label">Gasto em e-commerce (7d)</p><p class="card-value" id="kpi-gasto-ecom">-</p></div>
+    <div class="card highlight"><p class="card-label">ROAS e-commerce</p><p class="card-value" id="kpi-roas-ecom">-</p></div>
+    <div class="card warn"><p class="card-label">ROAS sobre investimento total em mídia</p><p class="card-value" id="kpi-roas-total">-</p></div>
+  </div>
+
+  <div class="section-title">Parecer — como acelerar e levar mais gente pras redes</div>
+  <div class="parecer">
+    <h3>Diagnóstico</h3>
+    <p>Julho está projetado para bater 101,75% da meta, mas o desconto médio de 33,78% mostra que o crescimento está sendo puxado por preço, não por atração de novo público. No perfil de consumo, apenas 6 produtos de alto custo (Ozempic, Mounjaro, Xigduo) somam quase o mesmo faturamento que 11 produtos genéricos — sinal de que a demanda por tratamentos de alto ticket é um motor de receita tão forte quanto o giro de genéricos.</p>
+    <p>O ROAS de e-commerce está em 2,06x — cada real investido em mídia de e-commerce retorna R$2,06 em vendas rastreadas pelo site. Olhando o investimento total em mídia (incluindo Alcance e WhatsApp, que não têm valor de conversão rastreado), o ROAS aparente cai para 0,80x — mas esse número subestima o retorno real, porque a maior parte do fluxo levado ao WhatsApp e à loja física não é capturada pelo pixel. Isso reforça a prioridade nº 1: melhorar o rastreamento de conversão do WhatsApp é o que vai revelar o verdadeiro retorno da campanha.</p>
+
+    <h3>Ações prioritárias para acelerar o fluxo aos canais digitais</h3>
+    <ol>
+      <li><strong>Use os produtos de alto giro como isca de tráfego para WhatsApp e site.</strong> Ozempic, Mounjaro e genéricos têm demanda de busca ativa. Campanhas direcionando para "consulte disponibilidade no WhatsApp" nesses itens tendem a gerar contato de altíssimo valor por lead, dado o ticket de R$1.200 a R$2.400 por venda.</li>
+      <li><strong>Ative recompra via WhatsApp para quem já comprou Baby/Infantil e Suplementos.</strong> São categorias de recompra previsível (fralda e vitamina acabam e o cliente volta). A queda de venda diária observada entre 07/07 e 12/07 é o momento certo para essa régua de mensagens.</li>
+      <li><strong>Reduza a dependência de desconto trocando parte da alavanca de preço por conveniência.</strong> A campanha WPP Delivery Chamada Wagner já mostra esse caminho: gera contato direto sem precisar descontar preço de tabela, e tem o menor custo por contato entre as campanhas ativas.</li>
+      <li><strong>Escale a campanha [56] CIMED e a WPP [40]</strong>, que têm o melhor custo por resultado do período — são a rota mais barata para aumentar o volume de pessoas levadas aos canais de venda sem precisar subir o desconto médio.</li>
+    </ol>
+  </div>
+
+  <footer>
+    Dados extraídos do MySeer ERP (Drogarias Bom Preço) e Meta Ads Manager. Atualizado manualmente.
+    <br>Gerado com apoio do Claude.
+  </footer>
+</div>
+
+<script>
+fetch('consumo_data.json')
+  .then(r => r.json())
+  .then(d => {
+    const loja = d.lojaJulho;
+    document.getElementById('kpi-fat').textContent = 'R$ ' + loja.vendaLiquida.toLocaleString('pt-BR', {maximumFractionDigits:0});
+    document.getElementById('kpi-notas').textContent = loja.qtdClientes.toLocaleString('pt-BR');
+    document.getElementById('kpi-ticket').textContent = 'R$ ' + loja.ticketMedio.toFixed(2).replace('.',',');
+    document.getElementById('kpi-itens').textContent = loja.itensPorCliente.toFixed(2).replace('.',',');
+    document.getElementById('kpi-desconto').textContent = loja.percentualDesconto.toFixed(2).replace('.',',') + '%';
+    document.getElementById('kpi-meta').textContent = 'R$ ' + loja.metaMes.toLocaleString('pt-BR', {maximumFractionDigits:0});
+    document.getElementById('kpi-projetada').textContent = 'R$ ' + loja.vendaProjetada.toLocaleString('pt-BR', {maximumFractionDigits:0});
+    document.getElementById('kpi-pct-meta').textContent = loja.percentualMetaProjetada.toFixed(2).replace('.',',') + '%';
+
+    const roas = d.roas;
+    document.getElementById('kpi-conversao').textContent = 'R$ ' + roas.valorConversaoSite.toLocaleString('pt-BR', {minimumFractionDigits:2});
+    document.getElementById('kpi-gasto-ecom').textContent = 'R$ ' + roas.gastoEcommerce.toLocaleString('pt-BR', {minimumFractionDigits:2});
+    document.getElementById('kpi-roas-ecom').textContent = roas.roasEcommerce.toFixed(2).replace('.',',') + 'x';
+    document.getElementById('kpi-roas-total').textContent = roas.roasInvestimentoTotal.toFixed(2).replace('.',',') + 'x';
+
+    const cats = d.categorias;
+    const cores = ['#2a78d6','#1baf7a','#eda100','#e34948','#4a3aa7','#e87ba4'];
+    const legendEl = document.getElementById('legendCategorias');
+    cats.forEach((c,i) => {
+      const span = document.createElement('span');
+      span.innerHTML = `<span class="dot" style="background:${cores[i % cores.length]}"></span>${c.categoria} (${((c.venda/cats.reduce((a,b)=>a+b.venda,0))*100).toFixed(1)}%)`;
+      legendEl.appendChild(span);
+    });
+
+    new Chart(document.getElementById('chCategorias'), {
+      type: 'bar',
+      data: {
+        labels: cats.map(c => c.categoria),
+        datasets: [{
+          label: 'Venda (R$)',
+          data: cats.map(c => c.venda),
+          backgroundColor: cats.map((_,i) => cores[i % cores.length]),
+          borderRadius: 4
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { x: { ticks: { callback: v => 'R$'+(v/1e6).toFixed(1)+'M' } } }
+      }
+    });
+
+    const tbody = document.getElementById('tabelaProdutos');
+    d.top15Produtos.forEach(p => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${p.produto}</td>
+        <td>${p.categoria}</td>
+        <td>R$ ${p.venda.toLocaleString('pt-BR', {maximumFractionDigits:0})}</td>
+        <td>${p.clientes.toLocaleString('pt-BR')}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  })
+  .catch(err => {
+    document.querySelector('.container').innerHTML += '<p style="color:red;">Erro ao carregar dados: ' + err + '</p>';
+  });
+</script>
+</body>
+</html>
