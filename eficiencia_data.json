@@ -1,0 +1,37 @@
+{
+  "eficiencia": [
+    {
+      "canal": "Alcance",
+      "ctr": 0.08,
+      "cpc": 1.65,
+      "custoPorAcao": 132.45,
+      "taxaCliqueAcao": 1.25,
+      "custoPorCompra": 251.66,
+      "shareVerba": 39.2,
+      "shareCompras": 17.2,
+      "shareWpp": 3.3
+    },
+    {
+      "canal": "E-commerce",
+      "ctr": 0.51,
+      "cpc": 1.11,
+      "custoPorAcao": 47.82,
+      "taxaCliqueAcao": 2.33,
+      "custoPorCompra": 51.81,
+      "shareVerba": 38.7,
+      "shareCompras": 82.8,
+      "shareWpp": 1.5
+    },
+    {
+      "canal": "WhatsApp",
+      "ctr": 0.73,
+      "cpc": 2.04,
+      "custoPorAcao": 5.47,
+      "taxaCliqueAcao": 37.37,
+      "custoPorCompra": null,
+      "shareVerba": 22.1,
+      "shareCompras": 0.0,
+      "shareWpp": 95.2
+    }
+  ]
+}
