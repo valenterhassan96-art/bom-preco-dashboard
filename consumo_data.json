@@ -1,0 +1,145 @@
+{
+  "periodo_nota": "Base histórica acumulada (não é corte de julho isolado)",
+  "categorias": [
+    {
+      "categoria": "Outro/Farma",
+      "venda": 34378332.67,
+      "qtdProdutos": 43
+    },
+    {
+      "categoria": "Suplemento/Vitamina",
+      "venda": 12883822.549999999,
+      "qtdProdutos": 19
+    },
+    {
+      "categoria": "Baby/Infantil",
+      "venda": 12507499.41,
+      "qtdProdutos": 17
+    },
+    {
+      "categoria": "Alto custo/Crônico",
+      "venda": 6474389.98,
+      "qtdProdutos": 6
+    },
+    {
+      "categoria": "Genérico",
+      "venda": 6430146.59,
+      "qtdProdutos": 11
+    },
+    {
+      "categoria": "Conveniência/Snack",
+      "venda": 2132243.85,
+      "qtdProdutos": 4
+    }
+  ],
+  "top15Produtos": [
+    {
+      "produto": "68569 - OZEMPIC 1MG 4 AGULHAS - PBM",
+      "venda": 2428699.33,
+      "clientes": "1.930",
+      "categoria": "Alto custo/Crônico"
+    },
+    {
+      "produto": "38696 - SORO FISIOLOGICO SORIMAX C/500ML",
+      "venda": 1862145.69,
+      "clientes": "177.690",
+      "categoria": "Outro/Farma"
+    },
+    {
+      "produto": "2971 - CLENIL A 400MG C/ 10 FLACONETES 2M",
+      "venda": 1761167.03,
+      "clientes": "23.500",
+      "categoria": "Outro/Farma"
+    },
+    {
+      "produto": "8286 - VICK VAPORUB C/12 GR *",
+      "venda": 1590159.45,
+      "clientes": "97.764",
+      "categoria": "Outro/Farma"
+    },
+    {
+      "produto": "8390 - EXPEC XAROPE C/120 ML",
+      "venda": 1544089.05,
+      "clientes": "63.152",
+      "categoria": "Outro/Farma"
+    },
+    {
+      "produto": "40778 - LEITE APTAMIL 1 PREM 0 A 6 MESES 800G",
+      "venda": 1540781.08,
+      "clientes": "19.328",
+      "categoria": "Baby/Infantil"
+    },
+    {
+      "produto": "16796 - NEOSORO ADULTO 30ML",
+      "venda": 1465488.45,
+      "clientes": "140.271",
+      "categoria": "Outro/Farma"
+    },
+    {
+      "produto": "12132 - DORFLEX C/10 COMP",
+      "venda": 1460810.01,
+      "clientes": "204.957",
+      "categoria": "Outro/Farma"
+    },
+    {
+      "produto": "41538 - DORFLEX 36 CPR",
+      "venda": 1416681.75,
+      "clientes": "70.767",
+      "categoria": "Outro/Farma"
+    },
+    {
+      "produto": "71375 - CARRINHOS HOT WHEELS BAS",
+      "venda": 1277269.89,
+      "clientes": "50.242",
+      "categoria": "Outro/Farma"
+    },
+    {
+      "produto": "42723 - LEITE APTAMIL 2 PREM 6 A 12 MESES 800G",
+      "venda": 1224161.11,
+      "clientes": "14.524",
+      "categoria": "Baby/Infantil"
+    },
+    {
+      "produto": "91384 - MOUNJARO 5MG/ML SOL INJ 04 CAN - PBM",
+      "venda": 1211497.55,
+      "clientes": "611",
+      "categoria": "Alto custo/Crônico"
+    },
+    {
+      "produto": "56980 - GRIPALCE C/20 COMP",
+      "venda": 1202266.08,
+      "clientes": "123.120",
+      "categoria": "Outro/Farma"
+    },
+    {
+      "produto": "15451 - TORSILAX 30 CPR",
+      "venda": 1179931.95,
+      "clientes": "73.361",
+      "categoria": "Outro/Farma"
+    },
+    {
+      "produto": "38843 - GEN NISTATINA+OXIDO ZINCO POM 60GR",
+      "venda": 1151387.41,
+      "clientes": "85.509",
+      "categoria": "Genérico"
+    }
+  ],
+  "lojaJulho": {
+    "periodo": "01/07/2026 a 12/07/2026",
+    "vendaLiquida": 6500915.29,
+    "qtdClientes": 120398,
+    "ticketMedio": 54.0,
+    "itensPorCliente": 2.97,
+    "percentualDesconto": 33.78,
+    "metaMes": 15826908.13,
+    "vendaProjetada": 16103098.05,
+    "percentualMetaProjetada": 101.75
+  },
+  "roas": {
+    "valorConversaoSite": 5128.43,
+    "gastoEcommerce": 2486.72,
+    "gastoTotalMidia": 6420.49,
+    "roasEcommerce": 2.06,
+    "roasInvestimentoTotal": 0.8
+  }
+}
